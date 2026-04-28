@@ -52,7 +52,76 @@ Socket programming finds applications in various domains, including web developm
 3.	File Transfer Protocol: Protocols like FTP (File Transfer Protocol) utilize socket programming for transferring files between a client and a server.
 4.	Networked Games: Online multiplayer games rely on socket programming to facilitate communication between game clients and servers.
 5.	RPC mechanisms: which allow processes to execute code on a remote server, often use socket programming for communication.
+## program:
+import socket
 
+choice = input("Enter role (mentor / mentee): ").lower()
+
+# ------------------ MENTOR (SERVER) ------------------
+if choice == "mentor":
+    mentor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    mentor.bind(("127.0.0.1", 12345))
+    mentor.listen(1)
+
+    print("Mentor waiting for mentee...")
+    conn, addr = mentor.accept()
+    print("Connected to mentee:", addr)
+
+    while True:
+        msg = conn.recv(1024).decode()
+
+        if msg.lower() == "hi mentor":
+            reply = "Hello! How can I help you?"
+
+        elif msg.lower() == "what is socket programming":
+            reply = "It is a way for two computers to communicate over a network."
+
+        elif msg.lower() == "why is it used":
+            reply = "It is used for chatting, file transfer, and networking apps."
+
+        elif msg.lower() == "thank you":
+            reply = "You're welcome! Keep learning 👍"
+
+        elif msg.lower() == "bye":
+            reply = "Goodbye! See you soon."
+            conn.send(reply.encode())
+            break
+
+        else:
+            reply = "Sorry, I didn't understand."
+
+        conn.send(reply.encode())
+
+    conn.close()
+    mentor.close()
+
+# ------------------ MENTEE (CLIENT) ------------------
+elif choice == "mentee":
+    mentee = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    mentee.connect(("127.0.0.1", 12345))
+
+    messages = [
+        "Hi mentor",
+        "What is socket programming",
+        "Why is it used",
+        "Thank you",
+        "Bye"
+    ]
+
+    for msg in messages:
+        print("Mentee:", msg)
+        mentee.send(msg.encode())
+
+        reply = mentee.recv(1024).decode()
+        print("Mentor:", reply)
+
+    mentee.close()
+
+else:
+    print("Invalid choice! Run again and enter 'mentor' or 'mentee'")
+
+## output:
+<img width="1278" height="423" alt="Screenshot 2026-04-28 154827" src="https://github.com/user-attachments/assets/3e2d1a15-5c40-4f91-a6dd-474b6e5505aa" />
 
 ## Result:
 Thus the study of Socket Programming Completed Successfully
